@@ -81,7 +81,7 @@ export default function Register() {
 
   const handleGitHubLogin = () => {
     const clientId = 'Ov23liiFPy44veeSFoyG'
-    const redirectUri = 'http://localhost:8080/api/auth/github/callback'
+    const redirectUri = `${import.meta.env.VITE_API_URL}/api/auth/github/callback`
     const scope = 'user:email'
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`
   }
