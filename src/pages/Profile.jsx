@@ -238,14 +238,14 @@ export default function Profile() {
               <div className="relative shrink-0">
                 <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-[28px] border border-[var(--theme-chip-border)] bg-[var(--ghost-bg)] text-2xl font-bold theme-text shadow-[0_0_30px_rgba(99,102,241,0.2)]">
                   {profile?.profilePicture ? (
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}${user?.profilePicture}`}
-                      alt="Profile"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    getInitials(profile?.fullName)
-                  )}
+  <img
+    src={profile.profilePicture}  // To'liq URL
+    alt="Profile"
+    className="w-full h-full object-cover"
+  />
+) : (
+  <span>{getInitials(profile?.fullName)}</span>
+)}
                 </div>
 
                 <label

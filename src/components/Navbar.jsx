@@ -68,14 +68,14 @@ export default function Navbar() {
           <div className="glass-card-soft flex items-center gap-3 rounded-full px-3 py-2">
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-indigo-500/80 to-sky-500/80 text-xs font-bold text-white">
               {user?.profilePicture ? (
-                <img
-                  src={`${import.meta.env.VITE_API_URL}${user?.profilePicture}`}
-                  alt="avatar"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                getInitials(user?.fullName)
-              )}
+  <img
+    src={user.profilePicture}  // To'liq URL — prefix kerak emas!
+    alt="avatar"
+    className="h-full w-full object-cover"
+  />
+) : (
+  getInitials(user?.fullName)
+)}
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold theme-text">{user?.fullName}</p>
@@ -118,14 +118,14 @@ export default function Navbar() {
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-indigo-500/80 to-sky-500/80 text-xs font-bold text-white">
                   {user?.profilePicture ? (
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}${user.profilePicture}`}
-                      alt="avatar"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    getInitials(user?.fullName)
-                  )}
+  <img
+    src={user.profilePicture}  // To'liq URL — prefix kerak emas!
+    alt="avatar"
+    className="h-full w-full object-cover"
+  />
+) : (
+  getInitials(user?.fullName)
+)}
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold theme-text">{user?.fullName}</p>
