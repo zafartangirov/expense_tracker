@@ -69,7 +69,7 @@ export default function Navbar() {
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-indigo-500/80 to-sky-500/80 text-xs font-bold text-white">
               {user?.profilePicture ? (
                 <img
-                  src={`${import.meta.env.VITE_API_URL}${user.profilePicture}`}
+                  src={`${import.meta.env.VITE_API_URL}${user?.profilePicture}`}
                   alt="avatar"
                   className="h-full w-full object-cover"
                 />
