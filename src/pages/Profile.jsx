@@ -71,46 +71,57 @@ export default function Profile() {
   }
 
   const handlePictureUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
+  const file = e.target.files[0]
+  if (!file) return
 
-    if (file.size > 5 * 1024 * 1024) {
-      setPictureError('Rasm hajmi 5MB dan oshmasin!')
-      return
-    }
-
-    if (!file.type.startsWith('image/')) {
-      setPictureError('Faqat rasm fayllari qabul qilinadi!')
-      return
-    }
-
-    setPictureLoading(true)
-    setPictureError('')
-
-    try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const res = await api.post('/user/profile/picture', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-
-      setProfile(res.data)
-      localStorage.setItem('profilePicture', res.data.profilePicture || '')
-      login({
-        token: localStorage.getItem('token'),
-        email: res.data.email ?? localStorage.getItem('email'),
-        fullName: res.data.fullName ?? localStorage.getItem('fullName'),
-        profilePicture: res.data.profilePicture ?? '',
-      })
-      setPictureError('')
-    } catch (err) {
-      setPictureError('Rasm yuklashda xatolik!')
-    } finally {
-      setPictureLoading(false)
-    }
+  if (file.size > 5 * 1024 * 1024) {
+    setPictureError('Rasm hajmi 5MB dan oshmasin!')
+    return
   }
 
+  if (!file.type.startsWith('image/')) {
+    setPictureError('Faqat rasm fayllari qabul qilinadi!')
+    return
+  }
+
+  setPictureLoading(true)
+  setPictureError('')
+
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const res = await api.post('/user/profile/picture', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+
+    setProfile(res.data)
+
+    // localStorage yangilash
+    localStorage.setItem('profilePicture', res.data.profilePicture || '')
+
+    // ✅ user null bo'lmasligi uchun tekshiruv
+    const currentToken = localStorage.getItem('token')
+    const currentEmail = localStorage.getItem('email')
+    const currentFullName = localStorage.getItem('fullName')
+
+    if (currentToken) {
+      login({
+        token: currentToken,
+        email: currentEmail,
+        fullName: currentFullName,
+        profilePicture: res.data.profilePicture || ''
+      })
+    }
+
+    setPictureError('')
+  } catch (err) {
+    console.error('Picture upload error:', err)
+    setPictureError('Rasm yuklashda xatolik!')
+  } finally {
+    setPictureLoading(false)
+  }
+}
   const handleProfileUpdate = async (e) => {
     e.preventDefault()
     setProfileLoading(true)
@@ -185,20 +196,24 @@ export default function Profile() {
   }
 
   const handleDeletePicture = async () => {
-    try {
-      await api.delete('/user/profile/picture')
-      setProfile({ ...profile, profilePicture: null })
-      localStorage.setItem('profilePicture', '')
+  try {
+    await api.delete('/user/profile/picture')
+    setProfile({ ...profile, profilePicture: null })
+    localStorage.setItem('profilePicture', '')
+
+    const currentToken = localStorage.getItem('token')
+    if (currentToken) {
       login({
-        token: localStorage.getItem('token'),
-        email: profile?.email ?? localStorage.getItem('email'),
-        fullName: profile?.fullName ?? localStorage.getItem('fullName'),
-        profilePicture: '',
+        token: currentToken,
+        email: localStorage.getItem('email'),
+        fullName: localStorage.getItem('fullName'),
+        profilePicture: ''
       })
-    } catch (err) {
-      setPictureError("Rasmni o'chirishda xatolik!")
     }
+  } catch (err) {
+    setPictureError('Rasmni o\'chirishda xatolik!')
   }
+}
 
   const handleDeleteAllExpenses = async () => {
     try {
