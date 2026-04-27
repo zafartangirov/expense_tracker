@@ -20,7 +20,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // ✅ Barcha funksiyalar if(loading) dan OLDIN!
   const persistUser = (data) => {
     const nextUser = normalizeUser(data)
     if (!nextUser.token) {
@@ -39,9 +38,7 @@ export function AuthProvider({ children }) {
   const syncUserProfile = async (baseUser) => {
     if (!baseUser?.token) return null
     try {
-      const res = await api.get('/user/profile', {
-        headers: { Authorization: `Bearer ${baseUser.token}` },
-      })
+      const res = await api.get('/user/profile')
       return persistUser({
         ...baseUser,
         email: res.data?.email ?? baseUser.email,
@@ -49,7 +46,11 @@ export function AuthProvider({ children }) {
         profilePicture: res.data?.profilePicture ?? baseUser.profilePicture ?? '',
       })
     } catch (error) {
-      console.error('Auth profile sync failed:', error)
+      // 401 bo'lsa — token yaroqsiz, logout
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        clearStoredAuth()
+        setUser(null)
+      }
       return baseUser
     }
   }
@@ -62,7 +63,9 @@ export function AuthProvider({ children }) {
       profilePicture: data?.profilePicture ?? localStorage.getItem('profilePicture'),
     })
     setLoading(false)
-    void syncUserProfile(nextUser)
+    if (nextUser?.token) {
+      void syncUserProfile(nextUser)
+    }
   }
 
   const logout = () => {
@@ -87,7 +90,6 @@ export function AuthProvider({ children }) {
     syncUserProfile(storedUser).finally(() => setLoading(false))
   }, [])
 
-  // ✅ if(loading) return eng oxirida!
   if (loading) return <LoadingScreen message="Tizim ishga tushmoqda" />
 
   return (
